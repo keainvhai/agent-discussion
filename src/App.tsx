@@ -1,6 +1,24 @@
 import { useState } from "react";
 
-const scenarios = [
+
+type Message = {
+  name: string;
+  color: string;
+  initial: string;
+  text: string;
+  rating?: number;
+  selfConf?: number;
+  groupConf?: number;
+};
+
+type Scenario = {
+  title: string;
+  description: string;
+  discussions: { phase: string; messages: Message[] }[];
+};
+
+
+const scenarios: Scenario[] = [
   {
     title: "AI Employee Monitoring",
     description: "A company uses AI software to monitor employees' computer activity and track their productivity during work hours. Employees are informed that monitoring is taking place. The action being evaluated is the company's use of AI monitoring to track employee productivity.",
@@ -303,18 +321,23 @@ const scenarios = [
   }
 ];
 
-const ratingColor = r => ["","#ef4444","#f97316","#eab308","#84cc16","#22c55e","#10b981"][r];
-const phaseIcon = { "Initial Ratings": "📊", "Open Discussion": "💬", "Final Ratings": "✅" };
+// const ratingColor = r => ["","#ef4444","#f97316","#eab308","#84cc16","#22c55e","#10b981"][r];
+// const phaseIcon = { "Initial Ratings": "📊", "Open Discussion": "💬", "Final Ratings": "✅" };
+const ratingColor = (r: number) => ["","#ef4444","#f97316","#eab308","#84cc16","#22c55e","#10b981"][r];
+const phaseIcon: Record<string, string> = { "Initial Ratings": "📊", "Open Discussion": "💬", "Final Ratings": "✅" };
 
 export default function App() {
   const [si, setSi] = useState(0);
   const [pi, setPi] = useState(0);
-  const [expanded, setExpanded] = useState({});
+  // const [expanded, setExpanded] = useState({});
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
 
   const sc = scenarios[si];
   const ph = sc.discussions[pi];
 
-  const toggle = key => setExpanded(e => ({ ...e, [key]: !e[key] }));
+  // const toggle = key => setExpanded(e => ({ ...e, [key]: !e[key] }));
+  const toggle = (key: string) => setExpanded(e => ({ ...e, [key]: !e[key] }));
 
   return (
     <div style={{ fontFamily: "'Segoe UI', sans-serif", background: "#0f172a", minHeight: "100vh", color: "#e2e8f0", display: "flex", flexDirection: "column", height: "100vh" }}>
@@ -412,8 +435,9 @@ export default function App() {
               ) : null)}
               <span style={{ marginLeft: "auto", fontSize: 11, color: "#64748b" }}>
                 Avg: <strong style={{ color: "#a5b4fc" }}>
-                  {(ph.messages.filter(m => m.rating).reduce((s, m) => s + m.rating, 0) / ph.messages.filter(m => m.rating).length).toFixed(1)}/6
-                </strong>
+                  {/* {(ph.messages.filter(m => m.rating).reduce((s, m) => s + m.rating, 0) / ph.messages.filter(m => m.rating).length).toFixed(1)}/6 */}
+                  {(ph.messages.filter(m => m.rating).reduce((s, m) => s + (m.rating ?? 0), 0) / ph.messages.filter(m => m.rating).length).toFixed(1)}/6
+              </strong>
               </span>
             </div>
           )}
